@@ -8,6 +8,8 @@
 * **Instructor (Instructor):** Usuario que gestiona, publica y organiza el contenido de sus cursos.
 * **Sistema (System):** Procesos automáticos (Ej.: Validaciones, notificaciones asíncronas).
 
+---
+
 ## 2. Diagrama de Casos de Uso (Alto Nivel)
 
 ```mermaid
@@ -60,9 +62,13 @@ graph LR
     I --> UC8
 ```
 
+---
+
 ## 3. Requerimientos por Módulo (MVP)
 A continuación se detallan las funcionalidades "Core" que deben estar presentes para considerar el
 producto fiable.
+
+---
 
 ### Módulo: Identidad (Identity Module)
 _Responsabilidad: Gestión de usuarios, autenticación y roles._
@@ -70,8 +76,14 @@ _Responsabilidad: Gestión de usuarios, autenticación y roles._
 Email y Contraseña.
     * _Regla:_ El email debe ser único en el sistema.
     * _Regla:_ La contraseña debe ser almacenadas de forma segura (encriptada/hasheada).
-* **RF-02 Autenticación (Login):** El usuario debe poder ingresar con su email y contraseña. El sistema
-devolverá un mecanismo de acceso (Ej.: Token JWT) si las credenciales son válidas.
+* **RF-02 Autenticación (Login):** El usuario debe poder ingresar con su email y contraseña. 
+  * _Salida:_ Si las credenciales son válidas, el sistema devolverá un token por JSON y otro por Cookie:
+  **Access Token (JWT de corta duración)** y **Refresh Token (Larga duración, HttpOnly Cookie)**.
+* **RF-02.1 Gestión de Sesiones (Refresh Tokens Rotation):** El sistema implementará rotación de tokens de
+refresco.
+  * _Regla:_ Cada vez que se utiliza un Refresh Token, este se invalida y se emite uno nuevo.
+  * _Seguridad (Reuse Detection):_ Si el sistema detecta el uso de un token antiguo (ya rotado), deberá
+  revocar inmediatamente toda la cadena de sesiones del usuario por seguridad.
 * **RF-03 Asignación de Roles:** Al registrarse, el sistema debe asignar un rol por defecto.
   * _Nota_: Para el MVP, se puede definir el rol (Estudiante o Instructor) en el momento del registro
   o tener un endpoint separado para "convertirse en instructor".
@@ -115,10 +127,14 @@ una lección específica.
   * _Seguridad:_ El sistema **DEBE validar** contra el Módulo de Inscripciones que el usuario solicitante
   tenga una inscripción activa para el curso al que pertenece la lección. Si no, devuelve `403 Forbidden`.
 
+---
+
 ## 4. Fuera de Alcance (Out of Scope / V2)
 Las siguientes funcionalidades están explícitamente **EXCLUIDAS** de esta versión para garantizar la entrega
 del MVP y mantener la arquitectura simple inicialmente.
 * **Pagos Reales:** Integración con Stripe/MercadoPago (Queda para fase V2).
+* **JWT Blacklist (Logout inmediato):** No se implementará lista negra de Access Tokens en Redis. El Logout
+se manejará revocando el Refresh Token y eliminando el JWT del lado del cliente.
 * **Sistema de Reviews:** Valoraciones y comentarios de estudiantes.
 * **Exámenes/Quizzes:** Evaluaciones multiple choice.
 * **Certificados PDF:** Generación de diplomas al finalizar.
