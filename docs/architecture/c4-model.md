@@ -61,6 +61,7 @@ graph TD
         Backend("API Application\n[Java 21 + Spring Boot]"):::api
         Database("Primary Database\n[PostgreSQL]"):::db
         BlobStore("Object Storage\n[MinIO]"):::db
+        Cache("Redis Cache\n[In-Memory Key-Value Store]"):::db
     end
 
     %% Relaciones
@@ -68,6 +69,7 @@ graph TD
     WebApp -->|JSON / REST API| Backend
     Backend -->|SQL / JDBC| Database
     Backend -->|AWS SDK / HTTP| BlobStore
+    Backend -->|Lectura/Escritura rápida| Cache
 ```
 
 ### Decisiones Clave

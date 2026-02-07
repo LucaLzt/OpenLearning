@@ -84,6 +84,10 @@ refresco.
   * _Regla:_ Cada vez que se utiliza un Refresh Token, este se invalida y se emite uno nuevo.
   * _Seguridad (Reuse Detection):_ Si el sistema detecta el uso de un token antiguo (ya rotado), deberá
   revocar inmediatamente toda la cadena de sesiones del usuario por seguridad.
+* **RF-02.2 Cierre de Sesión Seguro (Logout con Blacklist):**
+  * _Acción:_ Cuando el usuario cierra sesión, el sistema debe invalidar inmediatamente el Access Token (JWT) actual, independientemente de su tiempo de expiración restante.
+  * _Mecanismo:_ El identificador del token (JTI) se almacenará en una lista de bloqueo temporal (Redis) hasta que expire naturalmente.
+  * _Validación:_ Cada petición autenticada deberá verificar que el token no se encuentre en dicha lista negra.
 * **RF-03 Asignación de Roles:** Al registrarse, el sistema debe asignar un rol por defecto.
   * _Nota_: Para el MVP, se puede definir el rol (Estudiante o Instructor) en el momento del registro
   o tener un endpoint separado para "convertirse en instructor".
@@ -133,8 +137,6 @@ una lección específica.
 Las siguientes funcionalidades están explícitamente **EXCLUIDAS** de esta versión para garantizar la entrega
 del MVP y mantener la arquitectura simple inicialmente.
 * **Pagos Reales:** Integración con Stripe/MercadoPago (Queda para fase V2).
-* **JWT Blacklist (Logout inmediato):** No se implementará lista negra de Access Tokens en Redis. El Logout
-se manejará revocando el Refresh Token y eliminando el JWT del lado del cliente.
 * **Sistema de Reviews:** Valoraciones y comentarios de estudiantes.
 * **Exámenes/Quizzes:** Evaluaciones multiple choice.
 * **Certificados PDF:** Generación de diplomas al finalizar.

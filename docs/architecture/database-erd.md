@@ -35,7 +35,15 @@ erDiagram
     }
     
     USERS ||--o{ REFRESH_TOKENS : has_sessions
+    
+    REDIS_KEY_VALUE {
+        varchar key "blacklist:token:{jti}"
+        varchar value "true"
+        int ttl "Tiempo restante de expiración del JWT"
+    }
 ```
+> *Nota:* La tabla `REDIS_KEY_VALUE` se utiliza para almacenar claves efímeras de tokens revocados. La
+> expiración (TTL) se ajusta automáticamente al tiempo de vida restante del JWT.
 
 ## 2. Módulo: Content (Gestión Educativa)
 *Prefijo sugerido: `cont_` o schema `content`*
