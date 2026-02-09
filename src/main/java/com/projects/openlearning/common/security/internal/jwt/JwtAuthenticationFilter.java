@@ -44,7 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        // 5. If the token is valid, set the authentication in the SecurityContext
+        // 4. If the token is valid, set the authentication in the SecurityContext
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
             var authentication = tokenParserPort.getAuthentication(token);
 

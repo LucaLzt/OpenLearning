@@ -58,7 +58,7 @@ public class RefreshTokenService {
         User currentUser = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // 5. Rotate session: create new session and revoke old one
+        // 6. Rotate session: create new session and revoke old one
         String newRefreshToken = tokenIssuerPort.generateRefreshToken(
                 tokenParserPort.getSubjectFromToken(refreshToken),
                 Map.of()
@@ -73,7 +73,7 @@ public class RefreshTokenService {
         Instant newExpirationTime = Instant.now().plus(tokenIssuerPort.getRefreshTokenTtl());
         Session newSession = Session.rotate(currentSession, newRefreshToken, newExpirationTime);
 
-        // 6. Persist changes
+        // 7. Persist changes
         sessionRepository.save(currentSession);
         sessionRepository.save(newSession);
         log.info("Refresh token rotated successfully for user {}", currentSession.getUserId());
