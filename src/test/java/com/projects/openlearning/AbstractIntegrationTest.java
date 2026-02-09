@@ -1,12 +1,18 @@
-package com.projects.OpenLearning;
+package com.projects.openlearning;
 
 import com.redis.testcontainers.RedisContainer;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.containers.MinIOContainer;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 
+@TestPropertySource(properties = {
+        "application.security.jwt.secret=GenericSecureKeyForIntegrationTesting_MustBeVeryLongWarning__",
+        "application.security.jwt.access-expiration-seconds=360",
+        "application.security.jwt.refresh-expiration-seconds=864",
+})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class AbstractIntegrationTest {
 

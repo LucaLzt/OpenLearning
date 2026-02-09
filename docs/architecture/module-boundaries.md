@@ -56,7 +56,7 @@ Para hacer cumplir estos límites en el código Java, usaremos la visibilidad de
 Cada módula tendrá esta estructura:
 
 ```text
-com.projects.OpenLearning.<module_name>
+com.projects.openlearning.<module_name>
 ├── api          <-- PÚBLICO: DTOs, Eventos e Interfaces de Servicio expuestas.
 ├── internal     <-- PRIVADO: Entidades, Repositorios, Implementaciones.
 └── web          <-- PRIVADO: Controllers REST (Solo accesibles vía HTTP).

@@ -1,0 +1,111 @@
+package com.projects.openlearning.identity.internal.web;
+
+import com.projects.openlearning.identity.internal.service.LoginService;
+import com.projects.openlearning.identity.internal.service.LogoutService;
+import com.projects.openlearning.identity.internal.service.RefreshTokenService;
+import com.projects.openlearning.identity.internal.service.dto.LoginCommand;
+import com.projects.openlearning.identity.internal.service.dto.LogoutCommand;
+import com.projects.openlearning.identity.internal.web.dto.LoginRequest;
+import com.projects.openlearning.identity.internal.web.dto.LoginResponse;
+import com.projects.openlearning.identity.internal.web.dto.RefreshTokenResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
+
+@Slf4j
+@RequiredArgsConstructor
+@RestController
+@RequestMapping("/api/v1/auth")
+public class AuthController {
+
+    private final LoginService loginService;
+    private final LogoutService logoutService;
+    private final RefreshTokenService refreshTokenService;
+
+    @Value("${application.security.jwt.refresh-expiration-seconds}")
+    private long refreshTokenDuration;
+
+    @Value("${application.security.cookie-secure}")
+    private boolean secureCookie;
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request, HttpServletRequest httpRequest) {
+        log.info("Received login request for email: {}", request.email());
+
+        // 1. Create LoginCommand from LoginRequest and device info
+        var command = new LoginCommand(request.email(), request.password(), httpRequest.getHeader("User-Agent"));
+
+        // 2. Call LoginService to perform login
+        var result = loginService.login(command);
+
+        ResponseCookie cookie = buildCookie(result.refreshToken(), refreshTokenDuration);
+
+        // 3. Return the result as HTTP response
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(new LoginResponse(result.accessToken()));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<RefreshTokenResponse> refreshToken(@CookieValue(name = "refreshToken") String refreshToken) {
+        log.info("Received refresh token {} for refresh flow", refreshToken);
+
+        // 1. Call RefreshTokenService to refresh tokens
+        var result = refreshTokenService.refresh(refreshToken);
+
+        // 2. Build new refresh token cookie
+        ResponseCookie cookie = buildCookie(result.refreshToken(), refreshTokenDuration);
+
+        // 3. Return the new access token and refresh token cookie
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(new RefreshTokenResponse(result.accessToken()));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@CookieValue(name = "refreshToken") String refreshToken) {
+        log.info("Received refresh token {} for logout flow", refreshToken);
+
+        // 1. Search for the access token in the Security Context
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String accessToken = null;
+        try {
+            accessToken = (auth != null && auth.getCredentials() instanceof String) ? (String) auth.getCredentials() : null;
+            log.info("Access token from Security Context: {}", accessToken);
+        } catch (Exception e) {
+            log.warn("Could not extract access token from Security Context: {}", e.getMessage());
+        }
+
+        // 2. Call LogoutService to perform logout
+        logoutService.logout(new LogoutCommand(
+                accessToken,
+                refreshToken
+        ));
+
+        // 3. Clear the refresh token cookie
+        ResponseCookie cookie = buildCookie("", 0);
+
+        // 4. Return no content response with cleared cookie
+        return ResponseEntity.noContent()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .build();
+    }
+
+    // Helper method to build a secure refresh token cookie with appropriate attributes
+    private ResponseCookie buildCookie(String token, long maxAge) {
+        return ResponseCookie.from("refreshToken", token)
+                .httpOnly(true)
+                .secure(secureCookie)
+                .path("/")
+                .maxAge(maxAge)
+                .sameSite("Strict")
+                .build();
+    }
+}

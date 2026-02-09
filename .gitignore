@@ -36,4 +36,4 @@ build/
 .env
 
 ### Local ###
-application-dev.yml
+application-local.yml
