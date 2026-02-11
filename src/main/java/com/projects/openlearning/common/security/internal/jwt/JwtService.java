@@ -87,6 +87,14 @@ public class JwtService implements TokenIssuerPort, TokenParserPort {
     }
 
     /**
+     * Extracts the user ID from the JWT token by accessing the custom claim defined for user ID.
+     */
+    @Override
+    public String getUserIdFromToken(String token) {
+        return extractClaim(token, claims -> claims.get("userId", String.class));
+    }
+
+    /**
      * Extracts the JWT ID (JTI) from the token, which is a unique identifier for the token instance.
      */
     @Override

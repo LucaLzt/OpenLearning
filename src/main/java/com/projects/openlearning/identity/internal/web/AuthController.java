@@ -1,18 +1,19 @@
 package com.projects.openlearning.identity.internal.web;
 
-import com.projects.openlearning.identity.internal.service.LoginService;
-import com.projects.openlearning.identity.internal.service.LogoutService;
-import com.projects.openlearning.identity.internal.service.RefreshTokenService;
+import com.projects.openlearning.identity.internal.service.*;
 import com.projects.openlearning.identity.internal.service.dto.LoginCommand;
 import com.projects.openlearning.identity.internal.service.dto.LogoutCommand;
+import com.projects.openlearning.identity.internal.service.dto.RegisterCommand;
 import com.projects.openlearning.identity.internal.web.dto.LoginRequest;
 import com.projects.openlearning.identity.internal.web.dto.LoginResponse;
 import com.projects.openlearning.identity.internal.web.dto.RefreshTokenResponse;
+import com.projects.openlearning.identity.internal.web.dto.RegisterRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -28,6 +29,8 @@ public class AuthController {
     private final LoginService loginService;
     private final LogoutService logoutService;
     private final RefreshTokenService refreshTokenService;
+    private final RegisterService registerService;
+    private final ChangeRoleService changeRoleService;
 
     @Value("${application.security.jwt.refresh-expiration-seconds}")
     private long refreshTokenDuration;
@@ -96,6 +99,33 @@ public class AuthController {
         return ResponseEntity.noContent()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .build();
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<Void> register(@RequestBody RegisterRequest request) {
+        log.info("Received registration request for email: {}", request.email());
+
+        // 1. Call RegisterService to perform registration
+        registerService.register(new RegisterCommand(
+                request.fullName(),
+                request.email(),
+                request.password()
+        ));
+
+        // 2. Return created response
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    // Method only for demo purposes to change user role
+    @PostMapping("/change-role")
+    public ResponseEntity<Void> changeUserRole(@CookieValue(name = "refreshToken") String refreshToken) {
+        log.info("Received request to change user role with refresh token: {}", refreshToken);
+
+        // 1. Call ChangeRoleService to change the user's role
+        changeRoleService.changeRole(refreshToken);
+
+        // 2. Return ok response
+        return ResponseEntity.ok().build();
     }
 
     // Helper method to build a secure refresh token cookie with appropriate attributes

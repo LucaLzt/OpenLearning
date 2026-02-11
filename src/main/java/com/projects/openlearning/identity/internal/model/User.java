@@ -77,4 +77,12 @@ public class User {
                 .role(Role.INSTRUCTOR)
                 .build();
     }
+
+    public void changeRole() {
+        if (this.role == Role.STUDENT) {
+            this.role = Role.INSTRUCTOR;
+        } else {
+            this.role = Role.STUDENT;
+        }
+    }
 }

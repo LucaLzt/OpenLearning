@@ -2,6 +2,7 @@ package com.projects.openlearning.identity.internal.service;
 
 import com.projects.openlearning.common.security.api.TokenIssuerPort;
 import com.projects.openlearning.common.security.api.TokenParserPort;
+import com.projects.openlearning.identity.internal.exception.SecurityBreachException;
 import com.projects.openlearning.identity.internal.model.Session;
 import com.projects.openlearning.identity.internal.model.User;
 import com.projects.openlearning.identity.internal.repository.SessionRepository;
@@ -25,8 +26,7 @@ public class RefreshTokenService {
     private final SessionRepository sessionRepository;
     private final UserRepository userRepository;
 
-    // @Transactional(noRollbackFor = SecurityBreachException.class)
-    // The above annotation is commented out to avoid potential issues.
+    @Transactional(noRollbackFor = SecurityBreachException.class)
     public RefreshTokenResult refresh(String refreshToken) {
         // 1. Validate refresh token
         if (tokenParserPort.isRefreshTokenValid(refreshToken)) {
@@ -41,10 +41,9 @@ public class RefreshTokenService {
         // 3. Check if session is revoked
         if (currentSession.isRevoked()) {
             log.error("SECURITY BREACH: Attempted reuse of revoked token for user {}",
-                currentSession.getUserId());
+                    currentSession.getUserId());
             sessionRepository.revokeAllSessions(currentSession.getUserId());
-            throw new RuntimeException("Token reuse detected. Session revoked for security.");
-            // throw new SecurityBreachException("Token reuse detected. Session revoked for security.");
+            throw new SecurityBreachException("Token reuse detected. Session revoked for security.");
         }
 
         // 4. Check expiration & if its valid
@@ -61,7 +60,9 @@ public class RefreshTokenService {
         // 6. Rotate session: create new session and revoke old one
         String newRefreshToken = tokenIssuerPort.generateRefreshToken(
                 tokenParserPort.getSubjectFromToken(refreshToken),
-                Map.of()
+                Map.of(
+                        "userId", currentUser.getId().toString()
+                )
         );
         String newAccessToken = tokenIssuerPort.generateAccessToken(
                 tokenParserPort.getSubjectFromToken(refreshToken),

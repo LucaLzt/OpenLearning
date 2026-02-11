@@ -54,7 +54,9 @@ public class LoginService {
         );
         String refreshToken = tokenIssuerPort.generateRefreshToken(
                 user.getEmail(),
-                Map.of()
+                Map.of(
+                        "userId", user.getId().toString()
+                )
         );
 
         // 4. Create and persist session
