@@ -1,9 +1,7 @@
 package com.projects.openlearning.identity.internal.web;
 
 import com.projects.openlearning.identity.internal.service.*;
-import com.projects.openlearning.identity.internal.service.dto.LoginCommand;
-import com.projects.openlearning.identity.internal.service.dto.LogoutCommand;
-import com.projects.openlearning.identity.internal.service.dto.RegisterCommand;
+import com.projects.openlearning.identity.internal.service.dto.*;
 import com.projects.openlearning.identity.internal.web.dto.LoginRequest;
 import com.projects.openlearning.identity.internal.web.dto.LoginResponse;
 import com.projects.openlearning.identity.internal.web.dto.RefreshTokenResponse;
@@ -46,7 +44,7 @@ public class AuthController {
         var command = new LoginCommand(request.email(), request.password(), httpRequest.getHeader("User-Agent"));
 
         // 2. Call LoginService to perform login
-        var result = loginService.login(command);
+        LoginResult result = loginService.login(command);
 
         ResponseCookie cookie = buildCookie(result.refreshToken(), refreshTokenDuration);
 
@@ -61,7 +59,7 @@ public class AuthController {
         log.info("Received refresh token {} for refresh flow", refreshToken);
 
         // 1. Call RefreshTokenService to refresh tokens
-        var result = refreshTokenService.refresh(refreshToken);
+        RefreshTokenResult result = refreshTokenService.refresh(refreshToken);
 
         // 2. Build new refresh token cookie
         ResponseCookie cookie = buildCookie(result.refreshToken(), refreshTokenDuration);
