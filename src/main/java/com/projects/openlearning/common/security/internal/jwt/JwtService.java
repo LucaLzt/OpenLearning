@@ -14,6 +14,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -30,6 +32,7 @@ public class JwtService implements TokenIssuerPort, TokenParserPort {
 
     private final JwtProperties jwtProperties;
     private final StringRedisTemplate redisTemplate;
+    private final UserDetailsService userDetailsService;
     private SecretKey secretKey;
 
     private static final String TOKEN_TYPE_CLAIM = "token_type";
@@ -222,16 +225,14 @@ public class JwtService implements TokenIssuerPort, TokenParserPort {
      * UsernamePasswordAuthenticationToken that can be used by Spring Security for authorization decisions.
      */
     public Authentication getAuthentication(String token) {
+        // 1. Extract claims to get username and roles
         Claims claims = getAllClaims(token);
         String username = claims.getSubject();
-        String role = claims.get("role", String.class);
 
-        // Convert role claim to Spring Security authority
-        List<SimpleGrantedAuthority> authorities = (role != null)
-                ? Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role))
-                : Collections.emptyList();
+        // 2. Load user details from the UserDetailsService to get authorities and other user information
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-        User principal = new User(username, "", authorities);
-        return new UsernamePasswordAuthenticationToken(principal, token, authorities);
+        // 3. Create and return an Authentication object with the user details and authorities
+        return new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
     }
 }

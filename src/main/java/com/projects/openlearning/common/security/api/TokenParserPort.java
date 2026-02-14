@@ -3,7 +3,6 @@ package com.projects.openlearning.common.security.api;
 import org.springframework.security.core.Authentication;
 
 import java.time.Instant;
-import java.util.UUID;
 
 public interface TokenParserPort {
 

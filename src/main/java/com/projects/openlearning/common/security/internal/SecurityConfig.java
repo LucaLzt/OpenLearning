@@ -35,6 +35,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/api/v1/auth/logout").authenticated()
+                        .requestMatchers("/api/v1/instructors/**").hasRole("INSTRUCTOR")
                         .anyRequest().authenticated()
                 )
                 .userDetailsService(userDetailsService)

@@ -1,5 +1,6 @@
 package com.projects.openlearning.identity.internal.security;
 
+import com.projects.openlearning.common.security.api.AuthenticatedUser;
 import com.projects.openlearning.identity.internal.model.Role;
 import com.projects.openlearning.identity.internal.model.User;
 import org.jspecify.annotations.Nullable;
@@ -10,8 +11,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
-public record SecurityUser(User user) implements UserDetails {
+public record SecurityUser(User user) implements UserDetails, AuthenticatedUser {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -49,5 +51,20 @@ public record SecurityUser(User user) implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public UUID getUserId() {
+        return user.getId();
+    }
+
+    @Override
+    public String getEmail() {
+        return user.getEmail();
+    }
+
+    @Override
+    public String getRole() {
+        return user.getRole().name();
     }
 }
