@@ -71,7 +71,26 @@ public class Course {
     }
 
     public void publish() {
+        // 1. Validate that the course are not already published
+        if (this.status == CourseStatus.PUBLISHED) {
+            throw new IllegalStateException("Course is already published");
+        }
+
+        // 2. Validate that the course has at least one section with lessons
+        if (this.sections.stream().noneMatch(s -> s.getLessons() != null && !s.getLessons().isEmpty())) {
+            throw new IllegalStateException("Course must have at least one section with lessons to be published");
+        }
+
         this.status = CourseStatus.PUBLISHED;
+    }
+
+    public void archive() {
+        // 1. Validate that the course is currently published
+        if (this.status != CourseStatus.PUBLISHED) {
+            throw new IllegalStateException("Only published courses can be archived");
+        }
+
+        this.status = CourseStatus.DRAFT;
     }
 
     public void updateCourse(String newTitle, String newDescription) {
