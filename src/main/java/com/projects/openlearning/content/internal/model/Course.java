@@ -70,6 +70,11 @@ public class Course {
                 .build();
     }
 
+    public void updateCourseDetails(String newTitle, String newDescription) {
+        this.title = newTitle != null ? newTitle : this.title;
+        this.description = newDescription != null ? newDescription : this.description;
+    }
+
     public void publish() {
         // 1. Validate that the course are not already published
         if (this.status == CourseStatus.PUBLISHED) {

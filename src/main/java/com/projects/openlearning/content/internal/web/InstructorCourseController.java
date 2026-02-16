@@ -2,6 +2,8 @@ package com.projects.openlearning.content.internal.web;
 
 import com.projects.openlearning.common.security.api.AuthenticatedUser;
 import com.projects.openlearning.content.internal.service.command.CreateCourseService;
+import com.projects.openlearning.content.internal.service.command.UpdateCourseService;
+import com.projects.openlearning.content.internal.service.command.dto.UpdateCourseCommand;
 import com.projects.openlearning.content.internal.service.model.CourseDetails;
 import com.projects.openlearning.content.internal.service.model.CourseSummary;
 import com.projects.openlearning.content.internal.service.model.ResourceCreated;
@@ -11,6 +13,7 @@ import com.projects.openlearning.content.internal.service.command.UpdateCourseSt
 import com.projects.openlearning.content.internal.service.command.dto.CreateCourseCommand;
 import com.projects.openlearning.content.internal.service.command.dto.UpdateCourseStatusCommand;
 import com.projects.openlearning.content.internal.web.dto.CreateCourseRequest;
+import com.projects.openlearning.content.internal.web.dto.UpdateCourseRequest;
 import com.projects.openlearning.content.internal.web.dto.UpdateCourseStatusRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +34,7 @@ public class InstructorCourseController {
     private final CreateCourseService createCourseService;
     private final GetInstructorCoursesService getInstructorCoursesService;
     private final GetInstructorCourseDetailService getInstructorCourseDetailService;
+    private final UpdateCourseService updateCourseService;
     private final UpdateCourseStatusService updateCourseStatusService;
 
     @PostMapping
@@ -72,6 +76,25 @@ public class InstructorCourseController {
 
         // 2. Return the course details
         return ResponseEntity.ok(courseDetails);
+    }
+
+    @PutMapping("/{courseId}")
+    public ResponseEntity<Void> updateCourse(@PathVariable UUID courseId,
+                                             @RequestBody UpdateCourseRequest request,
+                                             @AuthenticationPrincipal AuthenticatedUser authUser) {
+        log.info("Received request to update course with id: {} - Title: {}", courseId, request.title());
+
+        // 1. Call the service layer to update the course
+        updateCourseService.updateCourse(new UpdateCourseCommand(
+                        courseId,
+                        authUser.getUserId(),
+                        request.title(),
+                        request.description()
+                )
+        );
+
+        // 2. Return a 204 No Content response
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{courseId}/status")

@@ -10,5 +10,5 @@ public record CreateLessonCommand(
         UUID courseId,
         UUID sectionId,
         UUID instructorId
-){
+) {
 }
