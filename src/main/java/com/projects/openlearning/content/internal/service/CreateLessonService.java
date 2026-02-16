@@ -6,7 +6,7 @@ import com.projects.openlearning.content.internal.model.Section;
 import com.projects.openlearning.content.internal.repository.CourseRepository;
 import com.projects.openlearning.content.internal.repository.LessonRepository;
 import com.projects.openlearning.content.internal.service.dto.CreateLessonCommand;
-import com.projects.openlearning.content.internal.service.dto.LessonResponse;
+import com.projects.openlearning.content.internal.service.dto.LessonDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ public class CreateLessonService {
     private final CourseRepository courseRepository;
 
     @Transactional
-    public LessonResponse createLesson(CreateLessonCommand command) {
+    public LessonDetails createLesson(CreateLessonCommand command) {
         log.info("Creating lesson with title: {}, sectionId: {}, orderIndex: {}",
                 command.title(), command.sectionId(), command.orderIndex());
 
@@ -57,6 +57,6 @@ public class CreateLessonService {
         courseRepository.save(course);
 
         // 7. Return the created lesson details
-        return LessonResponse.fromEntity(newLesson);
+        return LessonDetails.fromEntity(newLesson);
     }
 }

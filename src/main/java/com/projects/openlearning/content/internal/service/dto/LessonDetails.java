@@ -4,7 +4,7 @@ import com.projects.openlearning.content.internal.model.Lesson;
 
 import java.util.UUID;
 
-public record LessonResponse(
+public record LessonDetails(
         UUID id,
         UUID sectionId,
         String title,
@@ -12,8 +12,8 @@ public record LessonResponse(
         String contextText,
         Integer orderIndex
 ) {
-    public static LessonResponse fromEntity(Lesson lesson) {
-        return new LessonResponse(
+    public static LessonDetails fromEntity(Lesson lesson) {
+        return new LessonDetails(
                 lesson.getId(),
                 lesson.getSection().getId(),
                 lesson.getTitle(),

@@ -3,7 +3,7 @@ package com.projects.openlearning.content.internal.web;
 import com.projects.openlearning.common.security.api.AuthenticatedUser;
 import com.projects.openlearning.content.internal.service.CreateLessonService;
 import com.projects.openlearning.content.internal.service.dto.CreateLessonCommand;
-import com.projects.openlearning.content.internal.service.dto.LessonResponse;
+import com.projects.openlearning.content.internal.service.dto.LessonDetails;
 import com.projects.openlearning.content.internal.web.dto.CreateLessonRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,10 +23,10 @@ public class InstructorLessonController {
     private final CreateLessonService createLessonService;
 
     @PostMapping
-    public ResponseEntity<LessonResponse> createLesson(@RequestBody CreateLessonRequest request,
-                                                       @PathVariable UUID courseId,
-                                                       @PathVariable UUID sectionId,
-                                                       @AuthenticationPrincipal AuthenticatedUser authUser) {
+    public ResponseEntity<LessonDetails> createLesson(@RequestBody CreateLessonRequest request,
+                                                      @PathVariable UUID courseId,
+                                                      @PathVariable UUID sectionId,
+                                                      @AuthenticationPrincipal AuthenticatedUser authUser) {
         log.info("Creating lesson: {} in section: {}", request.title(), sectionId);
 
         // 1. Create the command object for the service layer
@@ -41,7 +41,7 @@ public class InstructorLessonController {
         );
 
         // 2. Call the service layer to create the lesson
-        LessonResponse response = createLessonService.createLesson(command);
+        LessonDetails response = createLessonService.createLesson(command);
 
         // 3. Return a 201 Created response
         return ResponseEntity

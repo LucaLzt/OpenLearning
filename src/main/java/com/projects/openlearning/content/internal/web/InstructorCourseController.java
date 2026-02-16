@@ -2,7 +2,9 @@ package com.projects.openlearning.content.internal.web;
 
 import com.projects.openlearning.common.security.api.AuthenticatedUser;
 import com.projects.openlearning.content.internal.service.CreateCourseService;
+import com.projects.openlearning.content.internal.service.GetInstructorCoursesService;
 import com.projects.openlearning.content.internal.service.UpdateCourseStatusService;
+import com.projects.openlearning.content.internal.service.dto.CourseSummary;
 import com.projects.openlearning.content.internal.service.dto.CreateCourseCommand;
 import com.projects.openlearning.content.internal.service.dto.UpdateCourseStatusCommand;
 import com.projects.openlearning.content.internal.web.dto.CreateCourseRequest;
@@ -15,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -24,6 +27,7 @@ import java.util.UUID;
 public class InstructorCourseController {
 
     private final CreateCourseService createCourseService;
+    private final GetInstructorCoursesService getInstructorCoursesService;
     private final UpdateCourseStatusService updateCourseStatusService;
 
     @PostMapping
@@ -42,6 +46,17 @@ public class InstructorCourseController {
 
         // 2. Return a 201 Created response
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResourceIdResponse(newCourseId));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<CourseSummary>> getMyCourses(@AuthenticationPrincipal AuthenticatedUser authUser) {
+        log.info("Received request to get courses for instructor with id: {}", authUser.getUserId());
+
+        // 1. Call the service layer to get the list of courses
+        List<CourseSummary> courses = getInstructorCoursesService.getCoursesByInstructor(authUser.getUserId());
+
+        // 2. Return the list of courses
+        return ResponseEntity.ok(courses);
     }
 
     @PutMapping("/{courseId}/status")

@@ -5,7 +5,7 @@ import com.projects.openlearning.content.internal.model.Section;
 import com.projects.openlearning.content.internal.repository.CourseRepository;
 import com.projects.openlearning.content.internal.repository.SectionRepository;
 import com.projects.openlearning.content.internal.service.dto.CreateSectionCommand;
-import com.projects.openlearning.content.internal.service.dto.SectionResponse;
+import com.projects.openlearning.content.internal.service.dto.SectionDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ public class CreateSectionService {
     private final CourseRepository courseRepository;
 
     @Transactional
-    public SectionResponse createSection(CreateSectionCommand command) {
+    public SectionDetails createSection(CreateSectionCommand command) {
         log.info("Creating section with title: {}, courseId: {}, orderIndex: {}",
                 command.title(), command.courseId(), command.orderIndex());
 
@@ -48,6 +48,6 @@ public class CreateSectionService {
         courseRepository.save(course);
 
         // 6. Return the created section details
-        return SectionResponse.fromEntity(savedSection);
+        return SectionDetails.fromEntity(savedSection);
     }
 }
