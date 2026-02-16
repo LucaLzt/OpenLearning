@@ -1,11 +1,15 @@
 package com.projects.openlearning.content.internal.web;
 
 import com.projects.openlearning.common.security.api.AuthenticatedUser;
-import com.projects.openlearning.content.internal.service.CreateCourseService;
-import com.projects.openlearning.content.internal.service.GetInstructorCourseDetailService;
-import com.projects.openlearning.content.internal.service.GetInstructorCoursesService;
-import com.projects.openlearning.content.internal.service.UpdateCourseStatusService;
-import com.projects.openlearning.content.internal.service.dto.*;
+import com.projects.openlearning.content.internal.service.command.CreateCourseService;
+import com.projects.openlearning.content.internal.service.model.CourseDetails;
+import com.projects.openlearning.content.internal.service.model.CourseSummary;
+import com.projects.openlearning.content.internal.service.model.ResourceCreated;
+import com.projects.openlearning.content.internal.service.query.GetInstructorCourseDetailService;
+import com.projects.openlearning.content.internal.service.query.GetInstructorCoursesService;
+import com.projects.openlearning.content.internal.service.command.UpdateCourseStatusService;
+import com.projects.openlearning.content.internal.service.command.dto.CreateCourseCommand;
+import com.projects.openlearning.content.internal.service.command.dto.UpdateCourseStatusCommand;
 import com.projects.openlearning.content.internal.web.dto.CreateCourseRequest;
 import com.projects.openlearning.content.internal.web.dto.UpdateCourseStatusRequest;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +34,8 @@ public class InstructorCourseController {
     private final UpdateCourseStatusService updateCourseStatusService;
 
     @PostMapping
-    public ResponseEntity<ResourceIdResponse> createCourse(@RequestBody CreateCourseRequest request,
-                                                           @AuthenticationPrincipal AuthenticatedUser authUser) {
+    public ResponseEntity<ResourceCreated> createCourse(@RequestBody CreateCourseRequest request,
+                                                        @AuthenticationPrincipal AuthenticatedUser authUser) {
         log.info("Received request to create course with title: {}, description: {}",
                 request.title(), request.description());
 
@@ -44,7 +48,7 @@ public class InstructorCourseController {
         );
 
         // 2. Return a 201 Created response
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ResourceIdResponse(newCourseId));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResourceCreated(newCourseId));
     }
 
     @GetMapping

@@ -1,9 +1,9 @@
 package com.projects.openlearning.content.internal.web;
 
 import com.projects.openlearning.common.security.api.AuthenticatedUser;
-import com.projects.openlearning.content.internal.service.CreateLessonService;
-import com.projects.openlearning.content.internal.service.dto.CreateLessonCommand;
-import com.projects.openlearning.content.internal.service.dto.LessonDetails;
+import com.projects.openlearning.content.internal.service.command.CreateLessonService;
+import com.projects.openlearning.content.internal.service.command.dto.CreateLessonCommand;
+import com.projects.openlearning.content.internal.service.model.LessonDetails;
 import com.projects.openlearning.content.internal.web.dto.CreateLessonRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package com.projects.openlearning.content.internal.service.dto;
+package com.projects.openlearning.content.internal.service.model;
 
 import com.projects.openlearning.content.internal.model.Course;
 import com.projects.openlearning.content.internal.model.CourseStatus;

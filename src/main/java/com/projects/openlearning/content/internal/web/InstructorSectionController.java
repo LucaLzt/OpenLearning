@@ -1,9 +1,9 @@
 package com.projects.openlearning.content.internal.web;
 
 import com.projects.openlearning.common.security.api.AuthenticatedUser;
-import com.projects.openlearning.content.internal.service.CreateSectionService;
-import com.projects.openlearning.content.internal.service.dto.CreateSectionCommand;
-import com.projects.openlearning.content.internal.service.dto.SectionDetails;
+import com.projects.openlearning.content.internal.service.command.CreateSectionService;
+import com.projects.openlearning.content.internal.service.command.dto.CreateSectionCommand;
+import com.projects.openlearning.content.internal.service.model.SectionDetails;
 import com.projects.openlearning.content.internal.web.dto.CreateSectionRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

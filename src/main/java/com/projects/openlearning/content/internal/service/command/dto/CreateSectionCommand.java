@@ -1,4 +1,4 @@
-package com.projects.openlearning.content.internal.service.dto;
+package com.projects.openlearning.content.internal.service.command.dto;
 
 import java.util.UUID;
 

@@ -1,8 +1,8 @@
-package com.projects.openlearning.content.internal.service;
+package com.projects.openlearning.content.internal.service.command;
 
 import com.projects.openlearning.content.internal.model.Course;
 import com.projects.openlearning.content.internal.repository.CourseRepository;
-import com.projects.openlearning.content.internal.service.dto.CreateCourseCommand;
+import com.projects.openlearning.content.internal.service.command.dto.CreateCourseCommand;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
