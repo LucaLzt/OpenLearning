@@ -2,13 +2,11 @@ package com.projects.openlearning.content.internal.web;
 
 import com.projects.openlearning.common.security.api.AuthenticatedUser;
 import com.projects.openlearning.content.internal.service.CreateCourseService;
+import com.projects.openlearning.content.internal.service.GetInstructorCourseDetailService;
 import com.projects.openlearning.content.internal.service.GetInstructorCoursesService;
 import com.projects.openlearning.content.internal.service.UpdateCourseStatusService;
-import com.projects.openlearning.content.internal.service.dto.CourseSummary;
-import com.projects.openlearning.content.internal.service.dto.CreateCourseCommand;
-import com.projects.openlearning.content.internal.service.dto.UpdateCourseStatusCommand;
+import com.projects.openlearning.content.internal.service.dto.*;
 import com.projects.openlearning.content.internal.web.dto.CreateCourseRequest;
-import com.projects.openlearning.content.internal.service.dto.ResourceIdResponse;
 import com.projects.openlearning.content.internal.web.dto.UpdateCourseStatusRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +26,7 @@ public class InstructorCourseController {
 
     private final CreateCourseService createCourseService;
     private final GetInstructorCoursesService getInstructorCoursesService;
+    private final GetInstructorCourseDetailService getInstructorCourseDetailService;
     private final UpdateCourseStatusService updateCourseStatusService;
 
     @PostMapping
@@ -57,6 +56,18 @@ public class InstructorCourseController {
 
         // 2. Return the list of courses
         return ResponseEntity.ok(courses);
+    }
+
+    @GetMapping("/{courseId}")
+    public ResponseEntity<CourseDetails> getMyCourseDetail(@PathVariable UUID courseId,
+                                                           @AuthenticationPrincipal AuthenticatedUser authUser) {
+        log.info("Received request to get course details for course with id: {}", courseId);
+
+        // 1. Call the service layer to get the course details
+        CourseDetails courseDetails = getInstructorCourseDetailService.getCourseDetailsByInstructor(authUser.getUserId(), courseId);
+
+        // 2. Return the course details
+        return ResponseEntity.ok(courseDetails);
     }
 
     @PutMapping("/{courseId}/status")
