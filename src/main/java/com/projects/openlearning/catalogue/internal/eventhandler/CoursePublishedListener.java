@@ -29,7 +29,8 @@ public class CoursePublishedListener {
                 event.description(),
                 event.instructorName(),
                 event.price(),
-                event.publishedAt()
+                event.publishedAt(),
+                event.syllabus()
         );
 
         // 2. Save the new CourseProduct to the repository

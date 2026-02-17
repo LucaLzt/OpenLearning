@@ -2,6 +2,8 @@ package com.projects.openlearning.content.internal.service.command;
 
 import com.projects.openlearning.content.api.events.CourseArchivedEvent;
 import com.projects.openlearning.content.api.events.CoursePublishedEvent;
+import com.projects.openlearning.content.api.events.dto.PublicLesson;
+import com.projects.openlearning.content.api.events.dto.PublicSection;
 import com.projects.openlearning.content.internal.model.Course;
 import com.projects.openlearning.content.internal.model.CourseStatus;
 import com.projects.openlearning.content.internal.repository.CourseRepository;
@@ -11,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -48,7 +52,21 @@ public class UpdateCourseStatusService {
         // 1. Publish the course (Internal: validate status, price, etc.)
         course.publish();
 
-        // 2. Create and publish CoursePublishedEvent
+        // 2. Map the syllabus to the event
+        List<PublicSection> publicSyllabus = course.getSections().stream()
+                .map(s -> new PublicSection(
+                        s.getTitle(),
+                        s.getOrderIndex(),
+                        s.getLessons().stream()
+                                .map(l -> new PublicLesson(
+                                        l.getTitle(),
+                                        l.getOrderIndex()
+                                ))
+                                .toList()
+                ))
+                .toList();
+
+        // 3. Create and publish CoursePublishedEvent
         var event = new CoursePublishedEvent(
                 course.getId(),
                 course.getTitle(),
@@ -56,7 +74,8 @@ public class UpdateCourseStatusService {
                 course.getPrice(),
                 instructorName,
                 // "Cover URL Placeholder", // TODO: Agregar URL de portada cuando esté disponible
-                course.getUpdatedAt()
+                course.getUpdatedAt(),
+                publicSyllabus
         );
         publisher.publishEvent(event);
 
