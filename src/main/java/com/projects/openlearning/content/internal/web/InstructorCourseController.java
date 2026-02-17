@@ -47,6 +47,7 @@ public class InstructorCourseController {
         UUID newCourseId = createCourseService.createCourse(new CreateCourseCommand(
                         request.title(),
                         request.description(),
+                        request.price(),
                         authUser.getUserId()
                 )
         );
@@ -89,7 +90,8 @@ public class InstructorCourseController {
                         courseId,
                         authUser.getUserId(),
                         request.title(),
-                        request.description()
+                        request.description(),
+                        request.price()
                 )
         );
 
@@ -107,7 +109,8 @@ public class InstructorCourseController {
         updateCourseStatusService.updateCourseStatus(new UpdateCourseStatusCommand(
                         courseId,
                         request.status(),
-                        authUser.getUserId()
+                        authUser.getUserId(),
+                        authUser.getFullName()
                 )
         );
 

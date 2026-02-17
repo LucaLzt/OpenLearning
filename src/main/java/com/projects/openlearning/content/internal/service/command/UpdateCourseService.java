@@ -29,7 +29,7 @@ public class UpdateCourseService {
         }
 
         // 3. Update the course details
-        course.updateCourseDetails(command.title(), command.description());
+        course.updateCourseDetails(command.title(), command.description(), command.price());
 
         // 4. Save the updated course back to the repository
         courseRepository.save(course);

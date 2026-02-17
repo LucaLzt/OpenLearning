@@ -8,6 +8,8 @@ public interface AuthenticatedUser {
 
     String getEmail();
 
+    String getFullName();
+
     String getRole();
 
 }

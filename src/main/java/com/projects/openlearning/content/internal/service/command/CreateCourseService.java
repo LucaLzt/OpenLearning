@@ -23,7 +23,12 @@ public class CreateCourseService {
                 command.title(), command.description(), command.instructorId());
 
         // 1. Create a new Course entity
-        Course course = Course.createNewCourse(command.instructorId(), command.title(), command.description());
+        Course course = Course.createNewCourse(
+                command.instructorId(),
+                command.title(),
+                command.description(),
+                command.price()
+        );
 
         // 2. Save the course to the database
         courseRepository.save(course);

@@ -7,6 +7,7 @@ import java.util.UUID;
 public record UpdateCourseStatusCommand(
         UUID courseId,
         CourseStatus newStatus,
-        UUID instructorId
+        UUID instructorId,
+        String instructorName
 ) {
 }

@@ -58,6 +58,8 @@ erDiagram
         uuid instructor_id "Soft Ref a Identity.User"
         varchar title
         varchar status "Enum: DRAFT, PUBLISHED"
+        decimal price
+        varchar coverImageUrl
         datetime last_updated
     }
 

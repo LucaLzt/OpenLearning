@@ -64,6 +64,11 @@ public record SecurityUser(User user) implements UserDetails, AuthenticatedUser 
     }
 
     @Override
+    public String getFullName() {
+        return user.getFullName();
+    }
+
+    @Override
     public String getRole() {
         return user.getRole().name();
     }

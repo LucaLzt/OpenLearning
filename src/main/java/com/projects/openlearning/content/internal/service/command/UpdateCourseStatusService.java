@@ -1,10 +1,14 @@
 package com.projects.openlearning.content.internal.service.command;
 
+import com.projects.openlearning.content.api.events.CourseArchivedEvent;
+import com.projects.openlearning.content.api.events.CoursePublishedEvent;
+import com.projects.openlearning.content.internal.model.Course;
 import com.projects.openlearning.content.internal.model.CourseStatus;
 import com.projects.openlearning.content.internal.repository.CourseRepository;
 import com.projects.openlearning.content.internal.service.command.dto.UpdateCourseStatusCommand;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UpdateCourseStatusService {
 
     private final CourseRepository courseRepository;
+    private final ApplicationEventPublisher publisher;
 
     @Transactional
     public void updateCourseStatus(UpdateCourseStatusCommand command) {
@@ -28,16 +33,46 @@ public class UpdateCourseStatusService {
 
         // 3. Use switch case to determine the new status and update the course accordingly
         switch (command.newStatus()) {
-            case CourseStatus.PUBLISHED -> {
-                course.archive();
-            }
-            case CourseStatus.DRAFT -> {
-                course.publish();
-            }
-            default -> throw new IllegalArgumentException("Invalid course status: " + command.newStatus());
+            case PUBLISHED -> handlePublishing(course, command.instructorName());
+            case DRAFT -> handleArchiving(course);
+            default -> throw new IllegalArgumentException("Invalid transition to status: " + command.newStatus());
         }
 
         // 4. Save the updated course back to the repository
         courseRepository.save(course);
+    }
+
+    private void handlePublishing(Course course, String instructorName) {
+        log.info("Attempting to publish course with ID: {}", course.getId());
+
+        // 1. Publish the course (Internal: validate status, price, etc.)
+        course.publish();
+
+        // 2. Create and publish CoursePublishedEvent
+        var event = new CoursePublishedEvent(
+                course.getId(),
+                course.getTitle(),
+                course.getDescription(),
+                course.getPrice(),
+                instructorName,
+                // "Cover URL Placeholder", // TODO: Agregar URL de portada cuando esté disponible
+                course.getUpdatedAt()
+        );
+        publisher.publishEvent(event);
+
+        log.info("Course with ID: {} published successfully", course.getId());
+    }
+
+    private void handleArchiving(Course course) {
+        log.info("Archiving course: {}", course.getId());
+        course.archive();
+
+        // 2. Create and public CourseArchivedEvent
+        var event = new CourseArchivedEvent(
+                course.getId()
+        );
+        publisher.publishEvent(event);
+
+        log.info("Course with ID: {} archived successfully", course.getId());
     }
 }

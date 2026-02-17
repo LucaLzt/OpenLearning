@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,9 @@ public class Course {
     @Column(nullable = false)
     private CourseStatus status;
 
+    @Column(precision = 10, scale = 2)
+    private BigDecimal price;
+
     @LastModifiedDate
     @Column(name = "last_updated")
     private Instant updatedAt;
@@ -61,18 +65,20 @@ public class Course {
     /**
      * Factory method to create a new Course in DRAFT status.
      */
-    public static Course createNewCourse(UUID instructorId, String title, String description) {
+    public static Course createNewCourse(UUID instructorId, String title, String description, BigDecimal price) {
         return Course.builder()
                 .instructorId(instructorId)
                 .title(title)
                 .description(description)
+                .price(price != null ? price : BigDecimal.ZERO)
                 .status(CourseStatus.DRAFT)
                 .build();
     }
 
-    public void updateCourseDetails(String newTitle, String newDescription) {
+    public void updateCourseDetails(String newTitle, String newDescription, BigDecimal newPrice) {
         this.title = newTitle != null ? newTitle : this.title;
         this.description = newDescription != null ? newDescription : this.description;
+        this.price = newPrice != null ? newPrice : this.price;
     }
 
     public void publish() {
@@ -86,6 +92,11 @@ public class Course {
             throw new IllegalStateException("Course must have at least one section with lessons to be published");
         }
 
+        // 3. Validate that the course has price
+        if (this.price == null || this.price.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalStateException("Course must have a valid price to be published");
+        }
+
         this.status = CourseStatus.PUBLISHED;
     }
 
@@ -96,11 +107,6 @@ public class Course {
         }
 
         this.status = CourseStatus.DRAFT;
-    }
-
-    public void updateCourse(String newTitle, String newDescription) {
-        this.title = newTitle != null ? newTitle : this.title;
-        this.description = newDescription != null ? newDescription : this.description;
     }
 
     public void addSection(Section section) {
