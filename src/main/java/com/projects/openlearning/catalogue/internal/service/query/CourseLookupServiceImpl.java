@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -29,5 +30,19 @@ public class CourseLookupServiceImpl implements CourseLookupService {
                         courseProduct.getPrice(),
                         true
                 ));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CatalogueCourseSummary> getCoursesByIds(List<UUID> courseIds) {
+        return productRepository.findAllByIdIn(courseIds).stream()
+                .map(p -> new CatalogueCourseSummary(
+                        p.getId(),
+                        p.getTitle(),
+                        p.getDescription(),
+                        p.getPrice(),
+                        p.getInstructorName()
+                ))
+                .toList();
     }
 }
