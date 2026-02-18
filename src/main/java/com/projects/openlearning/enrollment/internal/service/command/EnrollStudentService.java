@@ -1,6 +1,6 @@
 package com.projects.openlearning.enrollment.internal.service.command;
 
-import com.projects.openlearning.catalogue.api.CourseLookupService;
+import com.projects.openlearning.catalogue.api.CoursePricingApi;
 import com.projects.openlearning.enrollment.internal.model.Enrollment;
 import com.projects.openlearning.enrollment.internal.repository.EnrollmentRepository;
 import com.projects.openlearning.enrollment.internal.service.command.dto.EnrollStudentCommand;
@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class EnrollStudentService {
 
     private final EnrollmentRepository enrollmentRepository;
-    private final CourseLookupService courseLookupService;
+    private final CoursePricingApi coursePricingApi;
 
     @Transactional
     public void enroll(EnrollStudentCommand command) {
@@ -31,7 +31,7 @@ public class EnrollStudentService {
         }
 
         // 2. Fetch course price info to ensure the course exists and is available for enrollment
-        var courseInfo = courseLookupService.getCoursePriceInfo(command.courseId())
+        var courseInfo = coursePricingApi.getCoursePriceInfo(command.courseId())
                 .orElseThrow(() -> new IllegalArgumentException("Course not found with id: " + command.courseId()));
 
         // 2. Create a new enrollment entity

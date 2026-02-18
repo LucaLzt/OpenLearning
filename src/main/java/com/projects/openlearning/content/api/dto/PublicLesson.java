@@ -1,4 +1,4 @@
-package com.projects.openlearning.content.api.events.dto;
+package com.projects.openlearning.content.api.dto;
 
 public record PublicLesson(
         String title,

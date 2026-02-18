@@ -1,7 +1,7 @@
 package com.projects.openlearning.enrollment.internal.service.query;
 
-import com.projects.openlearning.catalogue.api.CourseLookupService;
-import com.projects.openlearning.catalogue.api.CourseLookupService.CatalogueCourseSummary;
+import com.projects.openlearning.catalogue.api.CourseSummaryApi;
+import com.projects.openlearning.catalogue.api.dto.CatalogueCourseSummary;
 import com.projects.openlearning.enrollment.internal.model.Enrollment;
 import com.projects.openlearning.enrollment.internal.repository.EnrollmentRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import java.util.UUID;
 public class GetEnrollmentService {
 
     private final EnrollmentRepository enrollmentRepository;
-    private final CourseLookupService courseLookupService;
+    private final CourseSummaryApi courseLookupService;
 
     @Transactional(readOnly = true)
     public List<CatalogueCourseSummary> getEnrolledCoursesForStudent(UUID studentId) {

@@ -1,11 +1,10 @@
 package com.projects.openlearning.catalogue.internal.model;
 
-import com.projects.openlearning.content.api.events.dto.PublicSection;
+import com.projects.openlearning.content.api.dto.PublicSection;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.Instant;

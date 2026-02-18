@@ -1,19 +1,33 @@
-## ADR-002: Hexagonal Architecture (Ports & Adapters)
+## ADR-002: Layered Architecture
 
 ### Estado
+
 Aceptado
 
 ### Contexto
-Queremos que nuestra lógica de negocio (Dominio) no dependa de frameworks (Spring) ni de
-bases de datos, para facilitar el mantenimiento y los tests.
+
+Necesitamos una estructura organizativa para el código que sea eficiente y fácil de entender. La
+Arquitectura Hexagonal propuesta inicialmente introduce una complejidad accidental (exceso de
+Mappers, DTOs intermedios y Puertos) que no se justifica para la etapa actual del proyecto (MVP),
+donde la velocidad de entrega es prioritaria.
 
 ### Decisión
-Utilizar **Arquitectura Hexagonal (Ports & Adapters)** en cada módulo del monolito modular.
+
+Utilizar una **Arquitectura en Capas (Layered Architecture)** tradicional dentro de cada módulo
+del monolito.
+El flujo de dependencias será: `Web (Controller) -> Service (Bussiness Logic) -> Access (Repository)`.
 
 ### Consecuencias
+
 * **Ventajas:**
-  * El Dominio es puro Java (fácil de testear unitariamente).
-  * Podemos cambiar la base de datos o el framework web sin tocar el negocio.
+    * Simplicidad: Reducción drástica de código "boilerplate" (menos interfaces y conversores
+      de datos).
+    * Velocidad: Desarrollo más ágil aprovechando las convenciones estándar de Spring Boot.
+    * Curva de Aprendizaje: Es el patrón arquitectónico más común y fácil de adoptar para
+      desarrolladores Java.
 
 * **Desventajas:**
-    * Aumenta la cantidad de clases (DTOs, Mappers, Interfaces de Puertos).
+    * Acoplamiento: La lógica de negocio tiende a conocer detalles de la persistencia (ej. usando
+      Entidades JPA directamente en el Servicio).
+    * Menor Aislamiento: Cambiar el framework o la base de datos a futuro podría requerir
+      refactorizar la capa de servicio.

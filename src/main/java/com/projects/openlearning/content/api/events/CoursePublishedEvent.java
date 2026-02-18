@@ -1,6 +1,6 @@
 package com.projects.openlearning.content.api.events;
 
-import com.projects.openlearning.content.api.events.dto.PublicSection;
+import com.projects.openlearning.content.api.dto.PublicSection;
 
 import java.math.BigDecimal;
 import java.time.Instant;

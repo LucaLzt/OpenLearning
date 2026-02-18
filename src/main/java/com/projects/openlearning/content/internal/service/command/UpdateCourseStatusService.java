@@ -2,10 +2,9 @@ package com.projects.openlearning.content.internal.service.command;
 
 import com.projects.openlearning.content.api.events.CourseArchivedEvent;
 import com.projects.openlearning.content.api.events.CoursePublishedEvent;
-import com.projects.openlearning.content.api.events.dto.PublicLesson;
-import com.projects.openlearning.content.api.events.dto.PublicSection;
+import com.projects.openlearning.content.api.dto.PublicLesson;
+import com.projects.openlearning.content.api.dto.PublicSection;
 import com.projects.openlearning.content.internal.model.Course;
-import com.projects.openlearning.content.internal.model.CourseStatus;
 import com.projects.openlearning.content.internal.repository.CourseRepository;
 import com.projects.openlearning.content.internal.service.command.dto.UpdateCourseStatusCommand;
 import lombok.RequiredArgsConstructor;

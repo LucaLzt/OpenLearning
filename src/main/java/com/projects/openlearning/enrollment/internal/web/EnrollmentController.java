@@ -1,6 +1,6 @@
 package com.projects.openlearning.enrollment.internal.web;
 
-import com.projects.openlearning.catalogue.api.CourseLookupService.CatalogueCourseSummary;
+import com.projects.openlearning.catalogue.api.dto.CatalogueCourseSummary;
 import com.projects.openlearning.common.security.api.AuthenticatedUser;
 import com.projects.openlearning.enrollment.internal.service.command.EnrollStudentService;
 import com.projects.openlearning.enrollment.internal.service.command.dto.EnrollStudentCommand;

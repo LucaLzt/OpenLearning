@@ -1,6 +1,9 @@
 package com.projects.openlearning.catalogue.internal.service.query;
 
-import com.projects.openlearning.catalogue.api.CourseLookupService;
+import com.projects.openlearning.catalogue.api.CoursePricingApi;
+import com.projects.openlearning.catalogue.api.CourseSummaryApi;
+import com.projects.openlearning.catalogue.api.dto.CatalogueCourseSummary;
+import com.projects.openlearning.catalogue.api.dto.CoursePriceInfo;
 import com.projects.openlearning.catalogue.internal.repository.CourseProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +17,7 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CourseLookupServiceImpl implements CourseLookupService {
+public class CourseLookupServiceImpl implements CoursePricingApi, CourseSummaryApi {
 
     private final CourseProductRepository productRepository;
 

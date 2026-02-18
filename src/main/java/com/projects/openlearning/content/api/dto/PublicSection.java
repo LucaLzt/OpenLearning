@@ -1,4 +1,4 @@
-package com.projects.openlearning.content.api.events.dto;
+package com.projects.openlearning.content.api.dto;
 
 import java.util.List;
 

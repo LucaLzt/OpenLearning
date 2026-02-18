@@ -1,7 +1,7 @@
 package com.projects.openlearning.catalogue.internal.service.model;
 
 import com.projects.openlearning.catalogue.internal.model.CourseProduct;
-import com.projects.openlearning.content.api.events.dto.PublicSection;
+import com.projects.openlearning.content.api.dto.PublicSection;
 
 import java.math.BigDecimal;
 import java.time.Instant;
