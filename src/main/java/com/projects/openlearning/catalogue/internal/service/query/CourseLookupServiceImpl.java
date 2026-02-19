@@ -17,7 +17,7 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CourseLookupServiceImpl implements CoursePricingApi, CourseSummaryApi {
+class CourseLookupServiceImpl implements CoursePricingApi, CourseSummaryApi {
 
     private final CourseProductRepository productRepository;
 

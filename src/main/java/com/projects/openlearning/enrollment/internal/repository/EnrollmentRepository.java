@@ -1,6 +1,7 @@
 package com.projects.openlearning.enrollment.internal.repository;
 
 import com.projects.openlearning.enrollment.internal.model.Enrollment;
+import com.projects.openlearning.enrollment.internal.model.EnrollmentStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,6 +13,7 @@ import java.util.UUID;
 public interface EnrollmentRepository extends JpaRepository<Enrollment, UUID> {
 
     boolean existsByUserIdAndCourseId(UUID id, UUID courseId);
-
     List<Enrollment> findAllByUserId(UUID studentId);
+    boolean existsByUserIdAndCourseIdAndStatus(UUID userId, UUID courseId, EnrollmentStatus status);
+
 }
