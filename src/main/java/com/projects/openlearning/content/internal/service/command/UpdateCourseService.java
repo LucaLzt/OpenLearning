@@ -1,10 +1,13 @@
 package com.projects.openlearning.content.internal.service.command;
 
+import com.projects.openlearning.content.api.events.CourseUpdatedEvent;
 import com.projects.openlearning.content.internal.model.Course;
+import com.projects.openlearning.content.internal.model.CourseStatus;
 import com.projects.openlearning.content.internal.repository.CourseRepository;
 import com.projects.openlearning.content.internal.service.command.dto.UpdateCourseCommand;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UpdateCourseService {
 
     private final CourseRepository courseRepository;
+    private final ApplicationEventPublisher publisher;
 
     @Transactional
     public void updateCourse(UpdateCourseCommand command) {
@@ -31,7 +35,17 @@ public class UpdateCourseService {
         // 3. Update the course details
         course.updateCourseDetails(command.title(), command.description(), command.price());
 
-        // 4. Save the updated course back to the repository
+        // 4. Verify if the course is Published to publish an event
+        if (course.getStatus().equals(CourseStatus.PUBLISHED)) {
+            publisher.publishEvent(new CourseUpdatedEvent(
+                    course.getId(),
+                    command.title(),
+                    command.description(),
+                    command.price()
+            ));
+        }
+
+        // 5. Save the updated course back to the repository
         courseRepository.save(course);
     }
 }

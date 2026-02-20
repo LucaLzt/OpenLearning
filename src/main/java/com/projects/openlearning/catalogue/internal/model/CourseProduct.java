@@ -41,4 +41,10 @@ public class CourseProduct {
     @Column(columnDefinition = "jsonb")
     private List<PublicSection> syllabus;
 
+    public void updateInfo(String title, String description, BigDecimal price) {
+        this.title = title != null ? title : this.title;
+        this.description = description != null ? description : this.description;
+        this.price = price != null ? price : this.price;
+    }
+
 }
