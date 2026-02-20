@@ -22,7 +22,7 @@ public class Lesson {
     @JoinColumn(name = "section_id", nullable = false)
     private Section section;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String title;
 
     @Column(name = "video_url", nullable = false)

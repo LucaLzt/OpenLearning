@@ -24,7 +24,7 @@ public class Section {
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String title;
 
     @Column(name = "order_index", nullable = false)
