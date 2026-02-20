@@ -17,8 +17,8 @@ public class EnrollmentAccessValidatorImpl implements CourseAccessValidator {
     private final EnrollmentRepository enrollmentRepository;
 
     @Override
-    public boolean hasActiveAccess(UUID userId, UUID courseID) {
-        log.info("Checking if enrollment with id {} has access", courseID);
-        return enrollmentRepository.existsByUserIdAndCourseIdAndStatus(userId, courseID, EnrollmentStatus.APPROVED);
+    public boolean hasActiveAccess(UUID userId, UUID courseId) {
+        log.info("Checking if enrollment with id {} has access", courseId);
+        return enrollmentRepository.existsByUserIdAndCourseIdAndStatus(userId, courseId, EnrollmentStatus.APPROVED);
     }
 }

@@ -24,7 +24,7 @@ public class GetStudentCourseService {
         log.info("Getting course for student {} ", studentId);
 
         // 1. SPI validate if the student has access to the course
-        if (!courseAccessValidator.hasActiveAccess(courseId, studentId)) {
+        if (!courseAccessValidator.hasActiveAccess(studentId, courseId)) {
             log.warn("Student {} has no access to course {}", studentId, courseId);
             throw new IllegalArgumentException("Student does not have access to the course with id: " + courseId);
         }
