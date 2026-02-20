@@ -1,6 +1,7 @@
 package com.projects.openlearning.identity.internal.service;
 
 import com.projects.openlearning.common.security.api.TokenParserPort;
+import com.projects.openlearning.identity.internal.exception.UserNotFoundException;
 import com.projects.openlearning.identity.internal.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +27,9 @@ public class ChangeRoleService {
         // 2. Find user by ID
         var user = userRepository.findById(userId)
                 .orElseThrow(() -> {
-                    log.warn("User with ID {} not found", userId);
-                    return new RuntimeException("User not found");
+                    String userEmail = tokenParserPort.getSubjectFromToken(refreshToken);
+                    log.warn("User with email {} not found", userEmail);
+                    return new UserNotFoundException(userEmail);
                 });
 
         // 3. Change role

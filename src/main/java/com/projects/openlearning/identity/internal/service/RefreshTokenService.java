@@ -2,7 +2,9 @@ package com.projects.openlearning.identity.internal.service;
 
 import com.projects.openlearning.common.security.api.TokenIssuerPort;
 import com.projects.openlearning.common.security.api.TokenParserPort;
+import com.projects.openlearning.identity.internal.exception.InvalidSessionException;
 import com.projects.openlearning.identity.internal.exception.SecurityBreachException;
+import com.projects.openlearning.identity.internal.exception.UserNotFoundException;
 import com.projects.openlearning.identity.internal.model.Session;
 import com.projects.openlearning.identity.internal.model.User;
 import com.projects.openlearning.identity.internal.repository.SessionRepository;
@@ -31,12 +33,12 @@ public class RefreshTokenService {
         // 1. Validate refresh token
         if (tokenParserPort.isRefreshTokenValid(refreshToken)) {
             log.warn("Refresh token is invalid");
-            throw new RuntimeException("Invalid refresh token");
+            throw new InvalidSessionException("Invalid refresh token");
         }
 
         // 2. Find session by finding the token inside
         Session currentSession = sessionRepository.findByToken(refreshToken)
-                .orElseThrow(() -> new RuntimeException("Session not found"));
+                .orElseThrow(() -> new InvalidSessionException("Session not found"));
 
         // 3. Check if session is revoked
         if (currentSession.isRevoked()) {
@@ -49,13 +51,13 @@ public class RefreshTokenService {
         // 4. Check expiration & if its valid
         if (currentSession.isExpired() && tokenParserPort.isRefreshTokenValid(refreshToken)) {
             log.warn("Refresh token has expired for user {}", currentSession.getUserId());
-            throw new RuntimeException("Refresh token has expired");
+            throw new InvalidSessionException("Refresh token has expired");
         }
 
         // 5. Get user info from token
         String userEmail = tokenParserPort.getSubjectFromToken(refreshToken);
         User currentUser = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException(userEmail));
 
         // 6. Rotate session: create new session and revoke old one
         String newRefreshToken = tokenIssuerPort.generateRefreshToken(

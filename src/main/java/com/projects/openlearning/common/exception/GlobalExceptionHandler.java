@@ -27,6 +27,24 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 "Acceso Denegado");
     }
 
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ProblemDetail handleResourceNotFoundException(ResourceNotFoundException e) {
+        log.warn("Resource Not Found: {}", e.getMessage());
+        return buildProblemDetail(HttpStatus.NOT_FOUND, e.getMessage(), "Recurso no encontrado");
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ProblemDetail handleConflictException(ConflictException e) {
+        log.warn("Business Conflict: {}", e.getMessage());
+        return buildProblemDetail(HttpStatus.CONFLICT, e.getMessage(), "Conflicto de negocio");
+    }
+
+    @ExceptionHandler(ForbiddenAccessException.class)
+    public ProblemDetail handleForbiddenAccessException(ForbiddenAccessException e) {
+        log.warn("Forbidden Access: {}", e.getMessage());
+        return buildProblemDetail(HttpStatus.FORBIDDEN, e.getMessage(), "Acceso denegado");
+    }
+
     /**
      * Helper method to build a ProblemDetail response with a consistent structure.
      */

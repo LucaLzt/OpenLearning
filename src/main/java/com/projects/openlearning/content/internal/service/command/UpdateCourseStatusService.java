@@ -4,6 +4,9 @@ import com.projects.openlearning.content.api.events.CourseArchivedEvent;
 import com.projects.openlearning.content.api.events.CoursePublishedEvent;
 import com.projects.openlearning.content.api.dto.PublicLesson;
 import com.projects.openlearning.content.api.dto.PublicSection;
+import com.projects.openlearning.content.internal.exception.CourseNotFoundException;
+import com.projects.openlearning.content.internal.exception.CourseOwnershipException;
+import com.projects.openlearning.content.internal.exception.InvalidCourseStateException;
 import com.projects.openlearning.content.internal.model.Course;
 import com.projects.openlearning.content.internal.repository.CourseRepository;
 import com.projects.openlearning.content.internal.service.command.dto.UpdateCourseStatusCommand;
@@ -27,18 +30,18 @@ public class UpdateCourseStatusService {
     public void updateCourseStatus(UpdateCourseStatusCommand command) {
         // 1. Search for the course by ID
         var course = courseRepository.findById(command.courseId())
-                .orElseThrow(() -> new IllegalArgumentException("Course not found with ID: " + command.courseId()));
+                .orElseThrow(() -> new CourseNotFoundException(command.courseId()));
 
         // 2. Check if the authenticated user is the instructor of the course
         if (!course.getInstructorId().equals(command.instructorId())) {
-            throw new IllegalArgumentException("User is not the instructor of the course");
+            throw new CourseOwnershipException(command.courseId());
         }
 
         // 3. Use switch case to determine the new status and update the course accordingly
         switch (command.newStatus()) {
             case PUBLISHED -> handlePublishing(course, command.instructorName());
             case DRAFT -> handleArchiving(course);
-            default -> throw new IllegalArgumentException("Invalid transition to status: " + command.newStatus());
+            default -> throw new InvalidCourseStateException("Invalid transition to status: " + command.newStatus());
         }
 
         // 4. Save the updated course back to the repository

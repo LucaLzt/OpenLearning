@@ -1,5 +1,7 @@
 package com.projects.openlearning.content.internal.service.command;
 
+import com.projects.openlearning.content.internal.exception.CourseNotFoundException;
+import com.projects.openlearning.content.internal.exception.CourseOwnershipException;
 import com.projects.openlearning.content.internal.model.Course;
 import com.projects.openlearning.content.internal.model.Section;
 import com.projects.openlearning.content.internal.repository.CourseRepository;
@@ -26,11 +28,11 @@ public class CreateSectionService {
 
         // 1. Search for the course in the database
         Course course = courseRepository.findById(command.courseId())
-                .orElseThrow(() -> new IllegalArgumentException("Course not found with id: " + command.courseId()));
+                .orElseThrow(() -> new CourseNotFoundException(command.courseId()));
 
         // 2. Validate if the instructor owns the course
         if (!course.getInstructorId().equals(command.instructorId())) {
-            throw new IllegalArgumentException("Instructor does not own the course with id: " + command.courseId());
+            throw new CourseOwnershipException(command.courseId());
         }
 
         // 3. Create a new section using the factory method

@@ -1,6 +1,7 @@
 package com.projects.openlearning.identity.internal.service;
 
 import com.projects.openlearning.common.security.api.TokenIssuerPort;
+import com.projects.openlearning.identity.internal.exception.InvalidSessionException;
 import com.projects.openlearning.identity.internal.model.Session;
 import com.projects.openlearning.identity.internal.repository.SessionRepository;
 import com.projects.openlearning.identity.internal.service.dto.LogoutCommand;
@@ -28,7 +29,7 @@ public class LogoutService {
         Session storedSession = sessionRepository.findByToken(request.refreshToken())
                 .orElseThrow(() -> {
                     log.warn("Logout warning: Session not found for token");
-                    return new RuntimeException("Sesión no encontrada");
+                    return new InvalidSessionException("Session not found");
                 });
         storedSession.revoke();
         sessionRepository.save(storedSession);

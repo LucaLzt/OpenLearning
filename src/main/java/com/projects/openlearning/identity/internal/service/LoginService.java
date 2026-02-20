@@ -1,6 +1,8 @@
 package com.projects.openlearning.identity.internal.service;
 
 import com.projects.openlearning.common.security.api.TokenIssuerPort;
+import com.projects.openlearning.identity.internal.exception.InvalidCredentialsException;
+import com.projects.openlearning.identity.internal.exception.UserNotFoundException;
 import com.projects.openlearning.identity.internal.model.Session;
 import com.projects.openlearning.identity.internal.model.User;
 import com.projects.openlearning.identity.internal.repository.SessionRepository;
@@ -34,14 +36,14 @@ public class LoginService {
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> {
                     log.warn("Login failed: User not found for email {}", request.email());
-                    return new RuntimeException("Credenciales inválidas");
+                    return new UserNotFoundException(request.email());
                 });
 
         // 2. Validate password
         boolean matches = passwordEncoder.matches(request.password(), user.getPasswordHash());
         if (!matches) {
             log.warn("Login failed: Invalid password for user {}", request.email());
-            throw new RuntimeException("Credenciales inválidas");
+            throw new InvalidCredentialsException();
         }
 
         // 3. Generate JWT token

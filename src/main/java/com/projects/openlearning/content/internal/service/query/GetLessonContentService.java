@@ -1,6 +1,8 @@
 package com.projects.openlearning.content.internal.service.query;
 
 import com.projects.openlearning.content.api.CourseAccessValidator;
+import com.projects.openlearning.content.internal.exception.LessonNotFoundException;
+import com.projects.openlearning.content.internal.exception.StudentEnrollmentException;
 import com.projects.openlearning.content.internal.model.Lesson;
 import com.projects.openlearning.content.internal.repository.LessonRepository;
 import com.projects.openlearning.content.internal.service.model.LessonContentResponse;
@@ -25,7 +27,7 @@ public class GetLessonContentService {
 
         // 1. Fetch the lesson from the repository
         Lesson lesson = lessonRepository.findById(lessonId)
-                .orElseThrow(() -> new IllegalArgumentException("Lesson not found with id: " + lessonId));
+                .orElseThrow(() -> new LessonNotFoundException(lessonId));
 
         // 2. Check if the student has access to the course associated with the lesson
         UUID courseId = lesson.getSection().getCourse().getId();
@@ -33,7 +35,7 @@ public class GetLessonContentService {
         log.info("Checking access for student {} to course {}", studentId, courseId);
         if (!courseAccessValidator.hasActiveAccess(studentId, courseId)) {
             log.warn("Student {} has no access to course {}", studentId, courseId);
-            throw new IllegalArgumentException("Student does not have access to the course with id: " + courseId);
+            throw new StudentEnrollmentException(courseId);
         }
 
         // 3. Return the lesson content in the response

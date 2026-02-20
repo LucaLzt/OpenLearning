@@ -32,5 +32,4 @@ public class GetInstructorCoursesService {
         // 2. Return the list of course summaries
         return courses;
     }
-
 }

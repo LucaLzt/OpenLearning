@@ -1,5 +1,6 @@
 package com.projects.openlearning.catalogue.internal.service.query;
 
+import com.projects.openlearning.catalogue.internal.exception.CatalogueCourseNotFound;
 import com.projects.openlearning.catalogue.internal.repository.CourseProductRepository;
 import com.projects.openlearning.catalogue.internal.service.model.CatalogueCourseDetails;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class GetCourseDetailsService {
 
         // 1. Fetch the CourseProduct from the repository
         var courseProduct = productRepository.findById(courseId)
-                .orElseThrow(() -> new IllegalArgumentException("Course not found with ID: " + courseId));
+                .orElseThrow(() -> new CatalogueCourseNotFound(courseId));
 
         // 2. Map the CourseProduct to CatalogueCourseDetails and return
         return CatalogueCourseDetails.fromEntity(courseProduct);

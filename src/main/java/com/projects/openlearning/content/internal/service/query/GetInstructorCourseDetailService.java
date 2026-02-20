@@ -1,5 +1,7 @@
 package com.projects.openlearning.content.internal.service.query;
 
+import com.projects.openlearning.content.internal.exception.CourseNotFoundException;
+import com.projects.openlearning.content.internal.exception.CourseOwnershipException;
 import com.projects.openlearning.content.internal.model.Course;
 import com.projects.openlearning.content.internal.repository.CourseRepository;
 import com.projects.openlearning.content.internal.service.model.CourseDetails;
@@ -23,11 +25,11 @@ public class GetInstructorCourseDetailService {
 
         // 1. Fetch the course from the repository
         Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new IllegalArgumentException("Course not found with id: " + courseId));
+                .orElseThrow(() -> new CourseNotFoundException(courseId));
 
         // 2. Validate if the instructor owns the course
         if (!course.getInstructorId().equals(instructorId)) {
-            throw new IllegalArgumentException("Instructor does not own the course with id: " + courseId);
+            throw new CourseOwnershipException(courseId);
         }
 
         // 3. Return the course details

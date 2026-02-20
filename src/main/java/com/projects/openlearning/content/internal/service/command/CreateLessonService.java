@@ -1,5 +1,8 @@
 package com.projects.openlearning.content.internal.service.command;
 
+import com.projects.openlearning.content.internal.exception.CourseNotFoundException;
+import com.projects.openlearning.content.internal.exception.CourseOwnershipException;
+import com.projects.openlearning.content.internal.exception.SectionNotFoundException;
 import com.projects.openlearning.content.internal.model.Course;
 import com.projects.openlearning.content.internal.model.Lesson;
 import com.projects.openlearning.content.internal.model.Section;
@@ -27,18 +30,18 @@ public class CreateLessonService {
 
         // 1. Search for the course in the database
         Course course = courseRepository.findById(command.courseId())
-                .orElseThrow(() -> new IllegalArgumentException("Course not found with id: " + command.courseId()));
+                .orElseThrow(() -> new CourseNotFoundException(command.courseId()));
 
         // 2. Validate if the instructor owns the course
         if (!course.getInstructorId().equals(command.instructorId())) {
-            throw new IllegalArgumentException("Instructor does not own the course with id: " + command.courseId());
+            throw new CourseOwnershipException(command.courseId());
         }
 
         // 3. Search fot he section in the course
         Section section = course.getSections().stream()
                 .filter(s -> s.getId().equals(command.sectionId()))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Section not found with id: " + command.sectionId()));
+                .orElseThrow(() -> new SectionNotFoundException(command.sectionId()));
 
         // 4. Create a new lesson using the factory method
         Lesson lesson = Lesson.createNewLesson(

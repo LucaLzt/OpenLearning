@@ -1,5 +1,6 @@
 package com.projects.openlearning.identity.internal.service;
 
+import com.projects.openlearning.identity.internal.exception.UserAlreadyExistsException;
 import com.projects.openlearning.identity.internal.model.User;
 import com.projects.openlearning.identity.internal.repository.UserRepository;
 import com.projects.openlearning.identity.internal.service.dto.RegisterCommand;
@@ -35,7 +36,7 @@ public class RegisterService {
             log.info("User with email {} registered successfully", command.email());
         } catch (DataIntegrityViolationException e) {
             log.warn("Registration failed: Email {} is already taken", command.email());
-            throw new RuntimeException("Email is already in use");
+            throw new UserAlreadyExistsException(command.email());
         }
     }
 }

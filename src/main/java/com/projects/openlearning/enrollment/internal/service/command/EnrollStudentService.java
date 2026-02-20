@@ -1,6 +1,8 @@
 package com.projects.openlearning.enrollment.internal.service.command;
 
 import com.projects.openlearning.catalogue.api.CoursePricingApi;
+import com.projects.openlearning.enrollment.internal.exception.AlreadyEnrolledException;
+import com.projects.openlearning.enrollment.internal.exception.CourseNotAvailableForEnrollmentException;
 import com.projects.openlearning.enrollment.internal.model.Enrollment;
 import com.projects.openlearning.enrollment.internal.repository.EnrollmentRepository;
 import com.projects.openlearning.enrollment.internal.service.command.dto.EnrollStudentCommand;
@@ -27,12 +29,12 @@ public class EnrollStudentService {
                 command.courseId()
         );
         if (alreadyEnrolled) {
-            throw new IllegalArgumentException("Student is already enrolled in the course with id: " + command.courseId());
+            throw new AlreadyEnrolledException(command.courseId());
         }
 
         // 2. Fetch course price info to ensure the course exists and is available for enrollment
         var courseInfo = coursePricingApi.getCoursePriceInfo(command.courseId())
-                .orElseThrow(() -> new IllegalArgumentException("Course not found with id: " + command.courseId()));
+                .orElseThrow(() -> new CourseNotAvailableForEnrollmentException(command.courseId()));
 
         // 2. Create a new enrollment entity
         Enrollment enrollment = Enrollment.createNewEnrollment(
